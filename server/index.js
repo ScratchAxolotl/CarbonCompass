@@ -1,6 +1,8 @@
 // * SERVER * //
 
 import express from 'express';
+import fs from 'fs'
+import offsetPrograms from './offsetPrograms.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +25,7 @@ app.get('/api/test', (req, res) => {
 
 
 // POST endpoint to add new offset programs
+// needs a 1sec cooldown
 app.post('/api/offset-programs', (req,res)=> {
   const newProgram = req.body;
 
@@ -34,7 +37,8 @@ app.post('/api/offset-programs', (req,res)=> {
   offsetPrograms.push(newProgram);
 
   // save updated data to file
-  fs.writeFileSync('./offsetPrograms.js', `module.exports = ${JSON.stringify(offsetPrograms, null, 2)};`);
+  fs.writeFileSync('./offsetPrograms.js', `const offsetPrograms = ${JSON.stringify(offsetPrograms, null, 2)};
+  \n export default offsetPrograms;`);
 
   res.status(201).json(newProgram);
 });
