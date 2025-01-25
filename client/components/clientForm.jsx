@@ -52,11 +52,14 @@ export default function ClientForm() {
           state: subregion,
           electricity_unit: 'kwh',
           electricity_value: powerUsage,
-         })
+         }),
+        headers: {
+            "Content-Type": "application/json",
+        },
       }
     try{
         console.log('req:',request)
-      const response = fetch(url, request);
+      const response = await fetch(url, request);
       if(!response.ok){
         throw new Error(`Response status: ${response.status}`);
       }
