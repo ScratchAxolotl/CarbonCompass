@@ -4,10 +4,19 @@ import { useEffect, useState } from 'react'
 // import './App.css'
 
 export default function ClientForm() {
+  const [emissionType, setEmissionType] = useState('');
+  const [makes, setMakes] = useState('');
+  const [models, setModels] = useState('');
   const [powerUsage, setPowerUsage] = useState(0);
   const [country, setCountry] = useState('');
   const [subregion, setSubregion] = useState('');
 
+  function selectEmissionType(){
+    setEmissionType(e.target.value)
+  }
+  function getModels(){
+    
+  }
   function changeAmount(e){
     setPowerUsage(e.target.value);
     console.log('amount',powerUsage);
@@ -77,6 +86,35 @@ export default function ClientForm() {
 
   return (
     <div>
+    <div id='vehicle-form'>
+      <h1>How far U drive?</h1>
+      <form onSubmit={(e)=>submitForm(e)}>
+        <label>Select Vehicle Make</label>
+        <select onChange={} className="form-select" autoComplete="vehicle" id="make-options">
+          <option value="">Vehicle Make</option>
+          </select>
+            <br></br>
+        <label id="model-label">State</label>
+        <select onChange={} className="form-select" autioComplete='model' id="model-options">
+          <option value="">Model</option>
+          
+        </select>
+            <br></br>
+        
+        <label>Distance Driven</label>
+        <input onChange={(e)=>changeAmount(e)} type='number' required min="0" value={powerUsage} step="0.01"></input>
+        <input type='submit'></input>
+        <label>Unit Select</label>
+        <select onChange={} className="form-select" autoComplete="unit" id="unit-options">
+          <option value="">Vehicle Make</option>
+          {
+
+          }
+          </select>
+        <input type='submit'></input>
+      </form>
+    </div>
+    <div id='electricity-form'>
       <h1>How much power U B usin?</h1>
       <form onSubmit={(e)=>submitForm(e)}>
         <label>Country</label>
@@ -193,6 +231,7 @@ export default function ClientForm() {
         <input onChange={(e)=>changeAmount(e)} type='number' required min="0" value={powerUsage} step="0.01"></input>
         <input type='submit'></input>
       </form>
+    </div>
     </div>
   )
 }
