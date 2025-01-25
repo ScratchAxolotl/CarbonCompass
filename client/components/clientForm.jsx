@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 // import './App.css'
 
-export default function clientForm() {
+export default function ClientForm() {
   const [powerUsage, setPowerUsage] = useState(0);
   const [country, setCountry] = useState('');
   const [subregion, setSubregion] = useState('');
@@ -66,9 +66,6 @@ export default function clientForm() {
       console.log(err.message);
     }
   }
-  // function submitForm(e){
-  //   fetch();
-  // }
 
   useEffect(()=>{
     //sum stuff :^)
