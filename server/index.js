@@ -2,6 +2,7 @@
 import express from 'express';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import offsetPrograms from './offsetPrograms.js';
 import openAiController from './controllers/openAiController.js';
 
@@ -13,12 +14,22 @@ const PORT = process.env.PORT || 3000;
 import electricityController from './controllers/electricityController.js';
 
 // * MIDDLEWARE
+
+// * CORS
+app.use(
+  cors({
+    origin: ['http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // ! * ROUTE - TEST - To be DELETED
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Our Carbon Emissions/Offset project server is live!' });
-});
+// app.get('/api/test', (req, res) => {
+//   res.json({ message: 'Our Carbon Emissions/Offset project server is live!' });
+// });
 
 // * ROUTE - ELECTRICITY
 app.post('/api/electricity', electricityController.getEmissions, (req, res) => {
