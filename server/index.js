@@ -1,14 +1,19 @@
 // * SERVER * //
 
 import express from 'express';
-import { flushSync } from 'react-dom';
-import fs from 'fs'
-import offsetPrograms from './offsetPrograms.js'
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+import electricityController from './controllers/electricityController.js';
+
 
 // * MIDDLEWARE
 app.use(express.json());
+
+// * ROUTES
+app.post('/api/electricity', electricityController.getEmissions, (req, res) => {
+  res.status(200).json(res.locals.emissionData);
+});
 
 // * ROUTES
 // !Test Route
