@@ -12,6 +12,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 import electricityController from './controllers/electricityController.js';
+import vehicleController from './controllers/vehicleController.js';
 
 // * MIDDLEWARE
 
@@ -33,7 +34,21 @@ app.use(express.json());
 
 // * ROUTE - ELECTRICITY
 app.post('/api/electricity', electricityController.getEmissions, (req, res) => {
-  res.status(200).json(res.locals.emissionData);
+  res.status(200).json(res.locals.emissionsData);
+});
+
+// * ROUTE - VEHICLES
+// on input form page load, get the vehicle makes for client selection (complete)
+app.get('/api/vehicles', vehicleController.getMakes, (req, res) => {
+  res.status(200).json(res.locals.vehicleMakes);
+});
+// on make selection, get the vehicle makes for client selection (complete)
+app.get('/api/vehicles/:makeId', vehicleController.getModels, (req, res) => {
+  res.status(200).json(res.locals.vehicleModels);
+});
+// *TODO the client will send a request on submit to get the emissions data from the form (incomplete)
+app.post('/api/vehicles/calculate', vehicleController.getEmissions, (req, res) => {
+  res.status(200).json(res.locals.vehicleModels);
 });
 
 // * ROUTE - OPENAI
