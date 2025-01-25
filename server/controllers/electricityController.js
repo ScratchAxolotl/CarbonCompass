@@ -3,15 +3,11 @@ const electricityController = {};
 
 electricityController.getEmissions = async (req, res, next) => {
   try {
+    console.log('req.body', req.body);
+    const {type, country, state, electricity_unit, electricity_value} = req.body;
     const response = await axios.post(
       'https://www.carboninterface.com/api/v1/estimates',
-      {
-        type: 'electricity',
-        electricity_unit: 'mwh',
-        electricity_value: 42,
-        country: 'us',
-        state: 'fl'
-      },
+      {type, electricity_unit, electricity_value, country, state},
       {
         headers: {
           Authorization: 'Bearer 11UjdqrI0oFfPbmU2GTWVQ',
@@ -19,13 +15,11 @@ electricityController.getEmissions = async (req, res, next) => {
         }
       }
     );
-    console.log(response.data.data.attributes.carbon_lb);
-    console.log(response.data.data.attributes.carbon_kg);
     const carbon_lb = response.data.data.attributes.carbon_lb;
     const carbon_kg = response.data.data.attributes.carbon_kg;
     const emissionsData = {carbon_lb, carbon_kg};
-    console.log(emissionsData);
-    res.locals.emissionData = emissionsData;
+    console.log('emissionsData', emissionsData);
+    res.locals.emissionsData = emissionsData;
 
   } catch (error) {
     console.error('Error creating carbon estimate:', error.message);
