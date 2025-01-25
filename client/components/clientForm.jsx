@@ -80,7 +80,7 @@ export default function ClientForm() {
   }
 
   useEffect(()=>{
-    //sum stuff :^)
+    
     subRegionsVis()
   });
 
@@ -90,12 +90,13 @@ export default function ClientForm() {
       <h1>How far U drive?</h1>
       <form onSubmit={(e)=>submitForm(e)}>
         <label>Select Vehicle Make</label>
-        <select onChange={} className="form-select" autoComplete="vehicle" id="make-options">
+        <select  className="form-select" autoComplete="vehicle" id="make-options">
           <option value="">Vehicle Make</option>
+          
           </select>
             <br></br>
         <label id="model-label">State</label>
-        <select onChange={} className="form-select" autioComplete='model' id="model-options">
+        <select  className="form-select" autoComplete='model' id="model-options">
           <option value="">Model</option>
           
         </select>
@@ -105,7 +106,7 @@ export default function ClientForm() {
         <input onChange={(e)=>changeAmount(e)} type='number' required min="0" value={powerUsage} step="0.01"></input>
         <input type='submit'></input>
         <label>Unit Select</label>
-        <select onChange={} className="form-select" autoComplete="unit" id="unit-options">
+        <select  className="form-select" autoComplete="unit" id="unit-options">
           <option value="">Vehicle Make</option>
           {
 
