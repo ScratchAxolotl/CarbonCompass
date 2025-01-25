@@ -11,48 +11,6 @@ const offsetPrograms = [
     "link": "https://theoceancleanup.com/",
     "description": "Offset your footprint"
   },
-  {
-    "name": "Eco-ship",
-    "link": "https://idk.com/eco-shipping",
-    "description": "suport sustainable shipping",
-    "id": 3
-  },
-  {
-    "name": "Eco-ship",
-    "link": "https://idk.com/eco-shipping",
-    "description": "suport sustainable shipping",
-    "id": 4
-  },
-  {
-    "name": "Eco-ship",
-    "link": "https://idk.com/eco-shipping",
-    "description": "suport sustainable shipping",
-    "id": 5
-  },
-  {
-    "name": "Eco-ship",
-    "link": "https://idk.com/eco-shipping",
-    "description": "suport sustainable shipping",
-    "id": 6
-  },
-  {
-    "name": "Eco-ship",
-    "link": "https://idk.com/eco-shipping",
-    "description": "suport sustainable shipping",
-    "id": 7
-  },
-  {
-    "name": "Eco-ship",
-    "link": "https://idk.com/eco-shipping",
-    "description": "suport sustainable shipping",
-    "id": 8
-  },
-  {
-    "name": "Eco-ship",
-    "link": "https://idk.com/eco-shipping",
-    "description": "suport sustainable shipping",
-    "id": 9
-  }
 ];
   
  export default offsetPrograms;

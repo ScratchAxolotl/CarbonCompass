@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 // import './App.css'
+import OffsetPrograms from "./offsetPrograms.jsx";
+
 
 export default function ClientForm() {
   const [powerUsage, setPowerUsage] = useState(0);
@@ -193,6 +195,10 @@ export default function ClientForm() {
         <input onChange={(e)=>changeAmount(e)} type='number' required min="0" value={powerUsage} step="0.01"></input>
         <input type='submit'></input>
       </form>
+      <div>
+        <h3>Offset Programs</h3>
+        <OffsetPrograms/> {/* render offsetProgram component */}
+      </div>
     </div>
   )
 }
