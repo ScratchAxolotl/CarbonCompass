@@ -23,7 +23,7 @@ app.get('/api/test', (req, res) => {
 
 // * ROUTE - ELECTRICITY
 app.post('/api/electricity', electricityController.getEmissions, (req, res) => {
-  res.status(200).json(res.locals.emissionData);
+  res.status(200).json(res.locals.emissionsData);
 });
 
 // * ROUTE - VEHICLES
