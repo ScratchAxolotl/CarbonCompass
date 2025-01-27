@@ -6,22 +6,66 @@ import OffsetPrograms from "./offsetPrograms.jsx";
 
 
 export default function ClientForm() {
-  const [emissionType, setEmissionType] = useState('');
-  const [makes, setMakes] = useState('');
-  const [models, setModels] = useState('');
+  const [makes, setMakes] = useState([]);
+  const [models, setModels] = useState([]);
+  const [makeOptions, setMakeOptions] = useState();
+  const [modelOptions, setModelOptions] = useState();
+  const [distance, setDistance] = useState('');
+  const [distanceUnit, setDistanceUnit] = useState();
+  const [vehicleModelId, setVehicleModelId] = useState();
   const [powerUsage, setPowerUsage] = useState(0);
   const [country, setCountry] = useState('');
   const [subregion, setSubregion] = useState('');
+  const [emissionType, setEmissionType] = useState('');
+  // const [emissions, setEmissions] = useState({});
 
-  function selectEmissionType(){
-    setEmissionType(e.target.value)
+  // function selectEmissionType(){
+  //   setEmissionType(e.target.value)
+  // }
+
+  async function getMakes(){
+    const url = '/api/vehicle/makes';
+    try{
+      const response = await fetch(url);
+      if(!response.ok){
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      // await setMakes( response.json());
+      const json = await response.json();
+
+      setMakes(json);
+
+      // console.log('one model:',makes.data.attributes.name)
+      // console.log('makes state:', makes)
+    }catch(err){
+      console.log(err.message);
+    }
   }
-  function getModels(){
-    
+  async function getModels(e){
+    // console.log('current selection:',e.target.value);
+    const url = `/api/vehicle/makes/${e.target.value}`;
+    try{
+      const response = await fetch(url);
+      if(!response.ok){
+        throw new Error(`Response status: ${response.status}`);
+      }
+      // console.log('fetching models...')
+      // await setMakes( response.json());
+      const json = await response.json();
+      // console.log('setting models state...')
+      setModels(json);
+      // console.log('modelsState:', json);
+
+      // console.log('one model:',makes.data.attributes.name)
+      // console.log('models state:', models)
+    }catch(err){
+      console.log(err.message);
+    }
   }
   function changeAmount(e){
     setPowerUsage(e.target.value);
-    console.log('amount',powerUsage);
+    // console.log('amount',powerUsage);
   }
   function countrySelection(e){
     setCountry(e.target.value);
@@ -52,74 +96,148 @@ export default function ClientForm() {
   };
   async function submitForm(e){
     e.preventDefault();
-    const url = '/api/electricity';
-    const request = {
-        method: 'POST',
-        body: JSON.stringify({
-          type: 'electricity',
-          country: country,
-          state: subregion,
-          electricity_unit: 'kwh',
-          electricity_value: powerUsage,
-         }),
-        headers: {
-            "Content-Type": "application/json",
-        },
+    const url = `/api/${emissionType}`;
+    let request;
+    if(emissionType === 'electricity'){
+      request = {
+          method: 'POST',
+          body: JSON.stringify({
+            type: 'electricity',
+            country: country,
+            state: subregion,
+            electricity_unit: 'kwh',
+            electricity_value: powerUsage,
+           }),
+          headers: {
+              "Content-Type": "application/json",
+          },
+        }
+        try{
+          console.log('req:',request)
+        const response = await fetch(url, request);
+        if(!response.ok){
+          throw new Error(`Response status: ${response.status}`);
+        }
+  
+        const json = await response.json();
+        console.log('res:',json)
+  
+      }catch(err){
+        console.log(err.message);
       }
-    try{
-        console.log('req:',request)
-      const response = await fetch(url, request);
-      if(!response.ok){
-        throw new Error(`Response status: ${response.status}`);
-      }
+      }else if (emissionType === 'vehicle'){
+      request = {
+          method: 'POST',
+          body: JSON.stringify({
+            type: 'vehicle',
+            distance_unit: distanceUnit,
+            distance_value: distance,
+            vehicle_model_id: vehicleModelId,
+           }),
+          headers: {
+              "Content-Type": "application/json",
+          },
+        }
 
-      const json = (await response).json();
-      console.log('res:',json)
-
-    }catch(err){
-      console.log(err.message);
+        try{
+            console.log('req:',request)
+          const response = await fetch(url, request);
+          if(!response.ok){
+            throw new Error(`Response status: ${response.status}`);
+          }
+    
+          const json = await response.json();
+          console.log('res:',json)
+    
+        }catch(err){
+          console.log(err.message);
+        }
     }
+    
   }
 
+  // this checks for what country you select so that you can choose the subregions for USA and Canada
   useEffect(()=>{
-    
-    subRegionsVis()
-  });
+    subRegionsVis();
+  })
+  
+  // this does the fetch for the makes
+    useEffect(()=>{
+      getMakes();
+    }, []);
+
+  // This creates the makes options array for the makes dropdown
+  useEffect(()=>{
+    if(makes.length > 0){
+      const makesArr = makes.map((makes, i) => {
+        return (<option key={i} value={makes.data.id}>{makes.data.attributes.name}</option>);
+      });
+      setMakeOptions(makesArr);
+      // console.log('compree', makes);
+      // console.log('makeOptionArr', makeOptions);
+    }
+    // console.log('makeOptions:',makes);
+  },[makes]);
+  
+  // CREATE THE MODELS OPTIONS ARRAY FOR THE MODELS DROPDOWN
+  useEffect(()=>{
+    // console.log('creating model options array...')
+    if(models.length > 0){
+      //unhide the model selector
+      document.getElementById("model-options").style.visibility = 'visible';
+      document.getElementById("model-label").style.visibility = 'visible';
+      // console.log('model0:',models[0])
+      const modelsArr = models.map((models, i) => {
+        return (<option key={i} value={models.data.id}>{`${models.data.attributes.vehicle_make} ${models.data.attributes.name} ${models.data.attributes.year}`}</option>);
+      });
+      setModelOptions(modelsArr);
+      // console.log('compree', models);
+      // console.log('modelOptionsArr', modelOptions);
+    }else{
+      document.getElementById("model-options").style.visibility = 'hidden';
+      document.getElementById("model-label").style.visibility = 'hidden';
+    }
+  }, [models]);
 
   return (
-    <div>
+    <div id='mainDiv'>
     <div id='vehicle-form'>
       <h1>How far U drive?</h1>
-      <form onSubmit={(e)=>submitForm(e)}>
+      <form onSubmit={(e)=>{
+        setEmissionType('vehicle');
+        submitForm(e);
+        }}>
+        {/* SELECT THE VEHICLE MAKE AND AFTER THE CLIENT CLICKS AN OPTION, SERVE THE MODELS */}
         <label>Select Vehicle Make</label>
-        <select  className="form-select" autoComplete="vehicle" id="make-options">
+        <select onChange={(e)=> getModels(e)} className="form-select" autoComplete="vehicle" id="make-options">
           <option value="">Vehicle Make</option>
-          
+          {makeOptions}
           </select>
             <br></br>
-        <label id="model-label">State</label>
-        <select  className="form-select" autoComplete='model' id="model-options">
+        <label id="model-label">Vehicle Model</label>
+        <select onChange={(e)=> setVehicleModelId(e.target.value)} className="form-select" autoComplete='model' id="model-options">
           <option value="">Model</option>
-          
+          {modelOptions}
         </select>
             <br></br>
         
         <label>Distance Driven</label>
-        <input onChange={(e)=>changeAmount(e)} type='number' required min="0" value={powerUsage} step="0.01"></input>
-        <input type='submit'></input>
+        <input onChange={(e)=> setDistance(e.target.value)} type='number' required min="0" value={distance} step="0.01"></input>
         <label>Unit Select</label>
-        <select  className="form-select" autoComplete="unit" id="unit-options">
-          <option value="">Vehicle Make</option>
-          {
-
-          }
+        <select onChange={(e)=> setDistanceUnit(e.target.value)} className="form-select" autoComplete="unit" id="unit-options">
+          <option value="">unit</option>
+          <option value="km">Km</option>
+          <option value="mi">Mi</option>
           </select>
         <input type='submit'></input>
       </form>
     </div>
     <div id='electricity-form'>
       <h1>How much power U B usin?</h1>
-      <form onSubmit={(e)=>submitForm(e)}>
+      <form onSubmit={(e)=>{
+        setEmissionType('electricity')
+        submitForm(e)}
+        }>
         <label>Country</label>
         <select onChange={(e)=>countrySelection(e)} className="form-select" autoComplete="country" id="country" name="country">
           <option value="">country</option>
@@ -234,10 +352,10 @@ export default function ClientForm() {
         <input onChange={(e)=>changeAmount(e)} type='number' required min="0" value={powerUsage} step="0.01"></input>
         <input type='submit'></input>
       </form>
-      <div>
+    </div>
+    <div id='offset-programs'>
         <h3>Offset Programs</h3>
         <OffsetPrograms/> {/* render offsetProgram component */}
-      </div>
     </div>
     </div>
   )
