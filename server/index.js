@@ -39,15 +39,15 @@ app.post('/api/electricity', electricityController.getEmissions, (req, res) => {
 
 // * ROUTE - VEHICLES
 // on input form page load, get the vehicle makes for client selection (complete)
-app.get('/api/vehicles', vehicleController.getMakes, (req, res) => {
+app.get('/api/vehicle/makes', vehicleController.getMakes, (req, res) => {
   res.status(200).json(res.locals.vehicleMakes);
 });
 // on make selection, get the vehicle makes for client selection (complete)
-app.get('/api/vehicles/:makeId', vehicleController.getModels, (req, res) => {
+app.get('/api/vehicle/makes/:makeId', vehicleController.getModels, (req, res) => {
   res.status(200).json(res.locals.vehicleModels);
 });
 // *TODO the client will send a request on submit to get the emissions data from the form (incomplete)
-app.post('/api/vehicles/calculate', vehicleController.getEmissions, (req, res) => {
+app.post('/api/vehicle', vehicleController.getEmissions, (req, res) => {
   res.status(200).json(res.locals.vehicleModels);
 });
 
