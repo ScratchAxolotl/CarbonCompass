@@ -188,8 +188,8 @@ export default function ClientForm() {
       document.getElementById("model-label").style.visibility = 'visible';
       // console.log('model0:',models[0])
       const modelsArr = models.map((models, i) => {
-        return (<option key={i} value={models.data.id}>{`${models.data.attributes.vehicle_make} ${models.data.attributes.name} ${models.data.attributes.year}`}</option>);
-      });
+        return (<option key={i} value={models.data.id}>{`${models.data.attributes.name} ${models.data.attributes.year}`}</option>);
+      }).sort();
       setModelOptions(modelsArr);
       // console.log('compree', models);
       // console.log('modelOptionsArr', modelOptions);
