@@ -12,7 +12,7 @@ vehicleController.getMakes = async (req, res, next) => {
         }
       }
     );
-    console.log(response.data);
+    // console.log(response.data);
     
     res.locals.vehicleMakes = response.data;
 
@@ -36,7 +36,7 @@ vehicleController.getModels = async (req, res, next) => {
         }
       }
     );
-    console.log(response.data);
+    // console.log(response.data);
     
     res.locals.vehicleModels = response.data;
 
