@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 // import './App.css'
-import OffsetPrograms from "./offsetPrograms.jsx";
+import OffsetPrograms from "./OffsetPrograms.jsx";
 
 
 export default function ClientForm() {
@@ -17,7 +17,10 @@ export default function ClientForm() {
   const [country, setCountry] = useState('');
   const [subregion, setSubregion] = useState('');
   const [emissionType, setEmissionType] = useState('');
-  // const [emissions, setEmissions] = useState({});
+  const [emissionsElec, setEmissionsElec] = useState({});
+  const [showEmissionsElec, setShowEmissionsElec] = useState('');
+  const [emissionsVeh, setEmissionsVeh] = useState({});
+  const [showEmissionsVeh, setShowEmissionsVeh] = useState('');
 
   // function selectEmissionType(){
   //   setEmissionType(e.target.value)
@@ -114,12 +117,13 @@ export default function ClientForm() {
         }
         try{
           console.log('req:',request)
-        const response = await fetch(url, request);
+          const response = await fetch(url, request);
         if(!response.ok){
           throw new Error(`Response status: ${response.status}`);
         }
   
         const json = await response.json();
+        setEmissionsElec(json);
         console.log('res:',json)
   
       }catch(err){
@@ -148,6 +152,7 @@ export default function ClientForm() {
     
           const json = await response.json();
           console.log('res:',json)
+          setEmissionsVeh(json);
     
         }catch(err){
           console.log(err.message);
@@ -155,6 +160,22 @@ export default function ClientForm() {
     }
     
   }
+
+  // this is making sure that emissionsElec, emissionsVeh, and emissionsType update before running their respective functions
+  useEffect(()=>{
+    setShowEmissionsElec(emissionsElec);
+    setShowEmissionsVeh(emissionsVeh);
+    if(showEmissionsVeh === ''){
+      document.getElementById('veh-emissions').style.visibility = 'hidden'
+    }else{
+      document.getElementById('veh-emissions').style.visibility = 'visible'
+    }
+    if(showEmissionsElec === ''){
+      document.getElementById('elec-emissions').style.visibility = 'hidden'
+    }else{
+      document.getElementById('elec-emissions').style.visibility = 'visible'
+    }
+  }, [emissionsElec, emissionsVeh, emissionType]);
 
   // this checks for what country you select so that you can choose the subregions for USA and Canada
   useEffect(()=>{
@@ -169,10 +190,13 @@ export default function ClientForm() {
   // This creates the makes options array for the makes dropdown
   useEffect(()=>{
     if(makes.length > 0){
-      const makesArr = makes.map((makes, i) => {
-        return (<option key={i} value={makes.data.id}>{makes.data.attributes.name}</option>);
+      const makesArr = makes.map((makes) => {
+        return([makes.data.attributes.name, makes.data.id])
+      }).sort();
+      const sortedMakesArr = makesArr.map((sMakes, i)=>{
+        return (<option key={i} value={sMakes[1]}>{sMakes[0]}</option>);
       });
-      setMakeOptions(makesArr);
+      setMakeOptions(sortedMakesArr);
       // console.log('compree', makes);
       // console.log('makeOptionArr', makeOptions);
     }
@@ -187,10 +211,18 @@ export default function ClientForm() {
       document.getElementById("model-options").style.visibility = 'visible';
       document.getElementById("model-label").style.visibility = 'visible';
       // console.log('model0:',models[0])
-      const modelsArr = models.map((models, i) => {
-        return (<option key={i} value={models.data.id}>{`${models.data.attributes.name} ${models.data.attributes.year}`}</option>);
+      const modelsArr = models.map((models) => {
+        return ([models.data.attributes.name, models.data.attributes.year, models.data.id]); 
       }).sort();
-      setModelOptions(modelsArr);
+      console.log(modelsArr);
+
+      const sortedModelsArr = modelsArr.map((sModels, i)=>{
+        return (<option key={i} value={sModels[2]}>{`${sModels[0]} ${sModels[1]}`}</option>);
+      });
+
+      console.log(sortedModelsArr);
+
+      setModelOptions(sortedModelsArr);
       // console.log('compree', models);
       // console.log('modelOptionsArr', modelOptions);
     }else{
@@ -231,6 +263,8 @@ export default function ClientForm() {
           </select>
         <input type='submit'></input>
       </form>
+      <p id='veh-emissions'>{`Carbon Emissions (lb): ${showEmissionsVeh.carbon_lb}
+      Carbon Emissions (kg): ${showEmissionsVeh.carbon_kg}`}</p>
     </div>
     <div id='electricity-form'>
       <h1>How much power U B usin?</h1>
@@ -352,6 +386,8 @@ export default function ClientForm() {
         <input onChange={(e)=>changeAmount(e)} type='number' required min="0" value={powerUsage} step="0.01"></input>
         <input type='submit'></input>
       </form>
+      <p id='elec-emissions'>{`Carbon Emissions (lb): ${showEmissionsElec.carbon_lb}
+      Carbon Emissions (kg): ${showEmissionsElec.carbon_kg}`}</p>
     </div>
     <div id='offset-programs'>
         <h3>Offset Programs</h3>
