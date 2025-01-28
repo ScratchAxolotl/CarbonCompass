@@ -3,7 +3,6 @@ const electricityController = {};
 
 electricityController.getEmissions = async (req, res, next) => {
   try {
-
     const {type, country, state, electricity_unit, electricity_value} = req.body;
     const response = await axios.post(
       'https://www.carboninterface.com/api/v1/estimates',
