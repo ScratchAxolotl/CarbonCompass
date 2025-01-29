@@ -98,7 +98,7 @@ export default function ClientForm() {
     }
   };
   async function submitForm(e){
-    e.preventDefault();
+    // e.preventDefault();
     const url = `/api/${emissionType}`;
     let request;
     if(emissionType === 'electricity'){
@@ -163,25 +163,32 @@ export default function ClientForm() {
 
   // this is making sure that emissionsElec, emissionsVeh, and emissionsType update before running their respective functions
   useEffect(()=>{
+    
     setShowEmissionsElec(emissionsElec);
     setShowEmissionsVeh(emissionsVeh);
-    if(showEmissionsVeh === ''){
-      document.getElementById('veh-emissions').style.visibility = 'hidden'
-    }else{
+    console.log('e',showEmissionsElec)
+    console.log('v',showEmissionsVeh)
+    if(!(showEmissionsVeh === '') && emissionType === 'vehicle'){
       document.getElementById('veh-emissions').style.visibility = 'visible'
-    }
-    if(showEmissionsElec === ''){
-      document.getElementById('elec-emissions').style.visibility = 'hidden'
     }else{
-      document.getElementById('elec-emissions').style.visibility = 'visible'
+      document.getElementById('veh-emissions').style.visibility = 'hidden'
     }
-  }, [emissionsElec, emissionsVeh, emissionType]);
+    if(!(showEmissionsElec === '') && emissionType === 'electricity'){
+      document.getElementById('elec-emissions').style.visibility = 'visible'
+    }else{
+      document.getElementById('elec-emissions').style.visibility = 'hidden'
+    }
+  }, [emissionsElec, emissionsVeh]);
 
   // this checks for what country you select so that you can choose the subregions for USA and Canada
   useEffect(()=>{
     subRegionsVis();
   })
   
+  useEffect(()=>{
+    submitForm()
+  }, [emissionType]);
+
   // this does the fetch for the makes
     useEffect(()=>{
       getMakes();
@@ -236,8 +243,8 @@ export default function ClientForm() {
     <div id='vehicle-form'>
       <h1>How far U drive?</h1>
       <form onSubmit={(e)=>{
+        e.preventDefault();
         setEmissionType('vehicle');
-        submitForm(e);
         }}>
         {/* SELECT THE VEHICLE MAKE AND AFTER THE CLIENT CLICKS AN OPTION, SERVE THE MODELS */}
         <label>Select Vehicle Make</label>
@@ -269,9 +276,9 @@ export default function ClientForm() {
     <div id='electricity-form'>
       <h1>How much power U B usin?</h1>
       <form onSubmit={(e)=>{
+        e.preventDefault();
         setEmissionType('electricity')
-        submitForm(e)}
-        }>
+        }}>
         <label>Country</label>
         <select onChange={(e)=>countrySelection(e)} className="form-select" autoComplete="country" id="country" name="country">
           <option value="">country</option>
