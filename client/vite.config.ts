@@ -1,13 +1,15 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import type { UserConfig } from 'vite';
 
 // https://vite.dev/config/
-export default defineConfig({
+const config: UserConfig = defineConfig({
   plugins: [react()],
-  // * Configured proxy to point to server when making API calls to express
   server: {
     proxy: {
       '/api': 'http://localhost:3000',
     },
   },
 });
+
+export default config;
