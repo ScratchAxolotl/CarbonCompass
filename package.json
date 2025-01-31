@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "nodemon --exec tsx server/index.ts",
+    "dev:server": "nodemon --watch server --ext ts --exec tsx server/index.ts",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:server\"",
     "build": "vite build && tsc --project server/tsconfig.json",
     "start": "node server/dist/index.js",
@@ -16,7 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "openai": "^4.80.1",
+    "openai": "^4.81.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
