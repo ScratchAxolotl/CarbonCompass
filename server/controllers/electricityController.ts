@@ -18,7 +18,7 @@ interface ElectricityController {
     req: Request<{}, {}, ElectricityRequestBody>,
     res: Response,
      next: NextFunction
-  ) => Promise<void | Response>;
+  ) => Promise<void>;
 }
 
 
@@ -29,7 +29,8 @@ const electricityController: ElectricityController = {
     const {type, country, state, electricity_unit, electricity_value} = req.body;
 
     if (!type || !country || !state || !electricity_unit || !electricity_value) {
-      return res.status(400).json({message: "Missing required fields in request body"})
+      res.status(400).json({message: "Missing required fields in request body"})
+      return;
     }
 
     const response = await axios.post(
