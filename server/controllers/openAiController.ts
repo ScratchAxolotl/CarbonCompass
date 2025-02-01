@@ -14,7 +14,7 @@ interface RequestBody {
   prompt?: string;
 }
 // ----------------------------------------------------------------------
-// * OPENAI ANALYSIS * //
+// * OPENAI ANALYSIS * // 
 // ----------------------------------------------------------------------
 
 const openAiController: OpenAIController = {
