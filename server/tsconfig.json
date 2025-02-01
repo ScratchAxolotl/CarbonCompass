@@ -1,3 +1,4 @@
+
 {
   "compilerOptions": {
     "target": "ESNext",
@@ -10,7 +11,7 @@
     "resolveJsonModule": true,
     "noEmit": true
   },
-  "include": ["server/**/*.ts"],
+  "include": ["./**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
 
