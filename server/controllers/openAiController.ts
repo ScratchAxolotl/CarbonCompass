@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import OpenAI from 'openai';
 
+
 interface OpenAIController {
   generateResponse: (
     req: Request,
@@ -12,12 +13,12 @@ interface OpenAIController {
 interface RequestBody {
   prompt?: string;
 }
-
 // ----------------------------------------------------------------------
-// * OPENAI ANALYSIS * // note
+// * OPENAI ANALYSIS * //
 // ----------------------------------------------------------------------
 
 const openAiController: OpenAIController = {
+  
   generateResponse: async (
     req: Request<{}, {}, RequestBody>,
     res: Response,
@@ -33,7 +34,7 @@ const openAiController: OpenAIController = {
         timeout: 60000, // 60 second timeout
       });
       
-      const { prompt = 'Write a haiku about carbon offsets' } = req.body;
+      const { prompt = 'Write a Haiku about carbon offsets, do not deviate from strict Haiku format:three lines, with five syllables in the first line, seven in the second, and five in the third' } = req.body;
       
       const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
