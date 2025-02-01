@@ -76,7 +76,7 @@ app.post('/api/offset-programs', (req, res) => {
 
   // save updated data to file
   fs.writeFileSync(
-    './offsetPrograms.js',
+    './offsetPrograms.ts',
     `const offsetPrograms = ${JSON.stringify(offsetPrograms, null, 2)};
   \n export default offsetPrograms;`
   );

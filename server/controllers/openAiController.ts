@@ -14,7 +14,7 @@ interface RequestBody {
 }
 
 // ----------------------------------------------------------------------
-// * OPENAI ANALYSIS * //
+// * OPENAI ANALYSIS * // note
 // ----------------------------------------------------------------------
 
 const openAiController: OpenAIController = {

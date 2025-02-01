@@ -14,7 +14,7 @@ module.exports = [
     {
       "name": "Eco-ship",
       "link": "https://idk.com/eco-shipping",
-      "description": "suport sustainable shipping",
+      "description": "support sustainable shipping",
       "id": 3
     },
   ];
