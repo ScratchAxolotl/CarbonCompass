@@ -6,7 +6,7 @@ interface OpenAIController {
     req: Request,
     res: Response,
     next: NextFunction
-  ) => Promise<void>;
+  ) => Promise<void | Response>;
 }
 
 interface RequestBody {
@@ -22,7 +22,7 @@ const openAiController: OpenAIController = {
     req: Request<{}, {}, RequestBody>,
     res: Response,
     next: NextFunction
-  ): Promise<void> => {
+  ): Promise<void | Response> => {
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({ error: 'OpenAI API key is missing' });
     }
