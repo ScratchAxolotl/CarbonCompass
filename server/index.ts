@@ -62,27 +62,27 @@ app.post('/api/openai/', openAiController.generateResponse, (req, res) => {
 
 // POST endpoint to add new offset programs
 // needs a 1sec cooldown
-app.post('/api/offset-programs', (req, res) => {
-  const newProgram = req.body;
+// app.post('/api/offset-programs', (req, res) => {
+//   const newProgram = req.body;
 
-  if (!newProgram.name || !newProgram.link || !newProgram.description) {
-    return res
-      .status(400)
-      .json({ error: 'All fields (name, link, description) are required.' });
-  }
-  // unique ID for new program
-  newProgram.id = offsetPrograms.length + 1;
-  offsetPrograms.push(newProgram);
+//   if (!newProgram.name || !newProgram.link || !newProgram.description) {
+//     return res
+//       .status(400)
+//       .json({ error: 'All fields (name, link, description) are required.' });
+//   }
+//   // unique ID for new program
+//   newProgram.id = offsetPrograms.length + 1;
+//   offsetPrograms.push(newProgram);
 
-  // save updated data to file
-  fs.writeFileSync(
-    './offsetPrograms.ts',
-    `const offsetPrograms = ${JSON.stringify(offsetPrograms, null, 2)};
-  \n export default offsetPrograms;`
-  );
+//   // save updated data to file
+//   fs.writeFileSync(
+//     './offsetPrograms.ts',
+//     `const offsetPrograms = ${JSON.stringify(offsetPrograms, null, 2)};
+//   \n export default offsetPrograms;`
+//   );
 
-  res.status(201).json(newProgram);
-});
+//   res.status(201).json(newProgram);
+// });
 
 // * START SERVER
 app.listen(PORT, () => {
