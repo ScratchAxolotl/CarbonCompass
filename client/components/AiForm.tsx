@@ -6,9 +6,9 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const AiForm = () => {
-  const [aiResponse, setAiResponse] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [aiResponse, setAiResponse] = useState<string | null>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
 
   const handleOpenAiRequest = async () => {
     setIsLoading(true);
@@ -22,7 +22,7 @@ const AiForm = () => {
       setAiResponse(response.data.aiResponse);
     } catch (error) {
       console.error('Error fetching AI response:', error);
-      setError('Failed to fetch Carbon Offset AI response');
+      setError(new Error('Failed to fetch Carbon Offset AI response'));
     } finally {
       setIsLoading(false);
     }
@@ -33,7 +33,7 @@ const AiForm = () => {
       <button onClick={handleOpenAiRequest} disabled={isLoading}>
         {isLoading ? 'Generating...' : 'Generate AI Response'}
       </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 'red' }}>{error.message}</p>}
       {aiResponse && <p>{aiResponse}</p>}
     </div>
   );
