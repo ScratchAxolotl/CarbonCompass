@@ -1,6 +1,5 @@
 import express from 'express';
 const apiRouter = express.Router();
-import { v4 as uuidv4 } from 'uuid';
 
 import electricityController from '../controllers/electricityController.ts';
 import vehicleController from '../controllers/vehicleController.ts';
