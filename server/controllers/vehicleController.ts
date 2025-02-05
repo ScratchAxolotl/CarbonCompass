@@ -38,7 +38,7 @@ const vehicleController: VehicleController = {
         'https://www.carboninterface.com/api/v1/vehicle_makes',
         {
           headers: {
-            Authorization: 'Bearer 11UjdqrI0oFfPbmU2GTWVQ',
+            Authorization: 'Bearer IjDMYGZHSI4y3gYMoxQYqQ',
             'Content-Type': 'application/json',
           },
         }
@@ -62,7 +62,7 @@ const vehicleController: VehicleController = {
         `https://www.carboninterface.com/api/v1/vehicle_makes/${makeId}/vehicle_models`,
         {
           headers: {
-            Authorization: 'Bearer 11UjdqrI0oFfPbmU2GTWVQ',
+            Authorization: 'Bearer IjDMYGZHSI4y3gYMoxQYqQ',
             'Content-Type': 'application/json',
           },
         }
