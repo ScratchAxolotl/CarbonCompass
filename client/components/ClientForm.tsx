@@ -202,11 +202,12 @@ const ClientForm: React.FC = () => {
         }
       }
     } else if (emissionType === 'vehicle') {
+      console.log("emissionType is entered into on clientForm")
 
       if (!distanceUnit || !distance || !vehicleModelId) {
-      console.error('Missing required fields for vehicle emissions');
-      return;
-    }
+        console.error('Missing required fields for vehicle emissions');
+        return;
+      }
 
 
       const requestBody: VehicleEmissionRequest = {
@@ -383,7 +384,9 @@ const ClientForm: React.FC = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            console.log("setting emissions type to vehicle")
             setEmissionType('vehicle');
+            console.log("emissionType after the setting when form submitted", emissionType)
           }}
         >
           {/* SELECT THE VEHICLE MAKE AND AFTER THE CLIENT CLICKS AN OPTION, SERVE THE MODELS */}
