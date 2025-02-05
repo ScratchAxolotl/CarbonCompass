@@ -66,6 +66,7 @@ const electricityController: ElectricityController = {
     res.locals.emissionsData = emissionsData;
     return next();
   } catch (error) {
+    if (error instanceof Error)
     console.error('Error creating carbon estimate:', error.message);
     res.status(500).json({ error: 'Error fetching data' });
    }
