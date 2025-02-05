@@ -38,7 +38,7 @@ const electricityController: ElectricityController = {
       {type, electricity_unit, electricity_value, country, state},
       {
         headers: {
-          Authorization: 'Bearer 11UjdqrI0oFfPbmU2GTWVQ',
+          Authorization: 'Bearer IjDMYGZHSI4y3gYMoxQYqQ',
           'Content-Type': 'application/json'
         }
       }
@@ -53,6 +53,7 @@ const electricityController: ElectricityController = {
     res.locals.emissionsData = emissionsData;
     return next();
   } catch (error) {
+    if (error instanceof Error)
     console.error('Error creating carbon estimate:', error.message);
     res.status(500).json({ error: 'Error fetching data' });
    }
