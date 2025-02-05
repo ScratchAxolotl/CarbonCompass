@@ -1,25 +1,76 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 // import './App.css'
-import OffsetPrograms from './OffsetPrograms.tsx';
+import OffsetPrograms from "./OffsetPrograms.jsx";
 
-export default function ClientForm() {
-  const [makes, setMakes] = useState([]);
-  const [models, setModels] = useState([]);
-  const [makeOptions, setMakeOptions] = useState();
-  const [modelOptions, setModelOptions] = useState();
-  const [distance, setDistance] = useState('');
-  const [distanceUnit, setDistanceUnit] = useState();
-  const [vehicleModelId, setVehicleModelId] = useState();
-  const [powerUsage, setPowerUsage] = useState(0);
-  const [country, setCountry] = useState('');
-  const [subregion, setSubregion] = useState('');
-  const [emissionType, setEmissionType] = useState('');
-  const [emissionsElec, setEmissionsElec] = useState({});
-  const [showEmissionsElec, setShowEmissionsElec] = useState('');
-  const [emissionsVeh, setEmissionsVeh] = useState({});
-  const [showEmissionsVeh, setShowEmissionsVeh] = useState('');
+
+// *** submitForm note: add unit for electricity kilowatts, watts, megawatts. currently hard codeded with kw.
+// note:248 check logic
+
+interface Make {
+  data: {
+    attributes: {
+      name: string;
+    }
+    id: string;
+  };
+}
+
+interface Model {
+  data: {
+    attributes: {
+      name: string;
+      year: number;
+    }
+    id: string;
+  };
+}
+
+interface EmissionsAPiResponse {
+  carbon_lb: number;
+  carbon_kg: number;
+}
+
+interface VehicleEmissionRequest {
+  type: string; // Always 'vehicle'
+  distance_unit: string; // Only allows 'mi' or 'km'
+  distance_value: number; // Distance as a number (decimal)
+  vehicle_model_id: string; // The vehicle model's ID
+}
+
+
+// export default function ClientForm()
+const ClientForm: React.FC = () => {
+  const [makes, setMakes] = useState<Make[]>([]); // type of modles data interface Make
+  const [models, setModels] = useState<Model[]>([]); 
+
+  const [makeOptions, setMakeOptions] = useState<JSX.Element[] | undefined>(); // show name of make. send back ID
+  const [modelOptions, setModelOptions] = useState<JSX.Element[] | undefined>(); // show name and year of model conditionaly when make is selected. send back ID 
+
+  // might be a problem with distance value is string and then needs to be converted to a number in request body 
+  const [distance, setDistance] = useState<string>(''); // getting ready to submit. adds distance to request
+
+  // might need to fix starting value of undefined 
+  const [distanceUnit, setDistanceUnit] = useState<string | undefined>(undefined); // submit once distance unit selected. adds unit to request. initially undefined until user selects unit.
+  // vehicleModelId starts with an empty string or undefined. once model selected, store model ID as string
+  const [vehicleModelId, setVehicleModelId] = useState<string | undefined>(''); // take model ID selected and add to request body. vehicleModelId = Id of model 
+
+  // not sure is powerUsage type is a number or a string
+  const [powerUsage, setPowerUsage] = useState<string | number>(0); // add powerUsage to request. updates state with new powerUsage number
+
+  const [country, setCountry] = useState<string | undefined>(''); // displays country list and only works if country is US or CA. 
+  const [subregion, setSubregion] = useState<string>('');
+
+  const [emissionType, setEmissionType] = useState<string>('');
+
+  // Initially, emissionsElec is null holding no data and later holds API reponse
+  // updates current emissions data for conditionaly based rendering of UI visibility.
+  const [emissionsElec, setEmissionsElec] = useState<EmissionsAPiResponse | string | number>(''); // stores electricity emissionJsonData and updates the most current electricity emissions data from API
+  const [emissionsVeh, setEmissionsVeh] = useState<EmissionsAPiResponse | string | number >(''); // stores vehicle emissionJsonData and updates the most current vehicle emissions data from API
+
+  const [showEmissionsElec, setShowEmissionsElec] = useState<string| number | EmissionsAPiResponse>('');
+  const [showEmissionsVeh, setShowEmissionsVeh] = useState<string| number | EmissionsAPiResponse >('');
 
   // function selectEmissionType(){
   //   setEmissionType(e.target.value)
@@ -34,17 +85,24 @@ export default function ClientForm() {
       }
 
       // await setMakes( response.json());
-      const json = await response.json();
+      const jsonData = await response.json();
 
-      setMakes(json);
+      setMakes(jsonData);
 
       // console.log('one model:',makes.data.attributes.name)
       // console.log('makes state:', makes)
+     // if instance iof 
     } catch (err) {
+      if (err instanceof Error)
       console.log(err.message);
     }
   }
-  async function getModels(e) {
+
+
+
+
+// after user selects make, event listener listens for call getModels
+  async function getModels(e: ChangeEvent<HTMLSelectElement>) {
     // console.log('current selection:',e.target.value);
     const url = `/api/vehicle/makes/${e.target.value}`;
     try {
@@ -54,48 +112,60 @@ export default function ClientForm() {
       }
       // console.log('fetching models...')
       // await setMakes( response.json());
-      const json = await response.json();
+      const jsonData = await response.json();
       // console.log('setting models state...')
-      setModels(json);
+      setModels(jsonData);
       // console.log('modelsState:', json);
 
       // console.log('one model:',makes.data.attributes.name)
       // console.log('models state:', models)
     } catch (err) {
+      if (err instanceof Error)
       console.log(err.message);
     }
   }
-  function changeAmount(e) {
+  function changeAmount(e: ChangeEvent<HTMLInputElement>) {
     setPowerUsage(e.target.value);
     // console.log('amount',powerUsage);
   }
-  function countrySelection(e) {
+  function countrySelection(e: ChangeEvent<HTMLSelectElement>) {
     setCountry(e.target.value);
     console.log('country:', e.target.value);
   }
-  function stateSelection(e) {
+  function stateSelection(e: ChangeEvent<HTMLSelectElement>) {
     setSubregion(e.target.value);
     console.log('subregion:', subregion);
   }
   function subRegionsVis() {
+    const stateOptions = document.getElementById('state-options');
+  const stateLabel = document.getElementById('state-label');
+
+
+  const provinceLabel = document.getElementById('province-label');
+  const provinceOptions = document.getElementById('province-options');
+
+
+
     if (country === 'US') {
-      document.getElementById('state-options').style.visibility = 'visible';
-      document.getElementById('state-label').style.visibility = 'visible';
-      document.getElementById('province-label').style.visibility = 'hidden';
-      document.getElementById('province-options').style.visibility = 'hidden';
+      if (stateOptions) stateOptions.style.visibility = 'visible';
+      if (stateLabel) stateLabel.style.visibility = 'visible';
+      if (provinceLabel) provinceLabel.style.visibility = 'hidden';
+      if (provinceOptions) provinceOptions.style.visibility = 'hidden';
     } else if (country === 'CA') {
-      document.getElementById('province-options').style.visibility = 'visible';
-      document.getElementById('province-label').style.visibility = 'visible';
-      document.getElementById('state-label').style.visibility = 'hidden';
-      document.getElementById('state-options').style.visibility = 'hidden';
+      if (provinceOptions) provinceOptions.style.visibility = 'visible';
+      if (provinceLabel) provinceLabel.style.visibility = 'visible';
+      if (stateLabel) stateLabel.style.visibility = 'hidden';
+      if (stateOptions) stateOptions.style.visibility = 'hidden';
     } else {
-      document.getElementById('province-label').style.visibility = 'hidden';
-      document.getElementById('state-label').style.visibility = 'hidden';
-      document.getElementById('province-options').style.visibility = 'hidden';
-      document.getElementById('state-options').style.visibility = 'hidden';
+      if (provinceLabel) provinceLabel.style.visibility = 'hidden';
+      if (stateLabel) stateLabel.style.visibility = 'hidden';
+      if (provinceOptions) provinceOptions.style.visibility = 'hidden';
+      if (stateOptions) stateOptions.style.visibility = 'hidden';
     }
   }
-  async function submitForm(e) {
+
+
+  async function submitForm(e?: FormEvent<HTMLFormElement>) {
     // e.preventDefault();
     const url = `/api/${emissionType}`;
     let request;
@@ -120,59 +190,88 @@ export default function ClientForm() {
           throw new Error(`Response status: ${response.status}`);
         }
 
-        const json = await response.json();
-        setEmissionsElec(json);
-        console.log('res:', json);
+        const jsonData = await response.json();
+        setEmissionsElec(jsonData);
+        console.log('res:', jsonData);
+
+        
+
       } catch (err) {
-        console.log(err.message);
+        if (err instanceof Error) {
+           console.log(err.message);
+        }
       }
     } else if (emissionType === 'vehicle') {
-      request = {
-        method: 'POST',
-        body: JSON.stringify({
-          type: 'vehicle',
-          distance_unit: distanceUnit,
-          distance_value: distance,
-          vehicle_model_id: vehicleModelId,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
+
+      if (!distanceUnit || !distance || !vehicleModelId) {
+      console.error('Missing required fields for vehicle emissions');
+      return;
+    }
+
+
+      const requestBody: VehicleEmissionRequest = {
+        type: 'vehicle',
+      distance_unit: distanceUnit,
+      distance_value: parseFloat(distance), // Convert string to number
+      vehicle_model_id: vehicleModelId,
+    };
+
+
+    const request: RequestInit = {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
 
       try {
-        console.log('req:', request);
+      //  console.log('req:', request);
         const response = await fetch(url, request);
         if (!response.ok) {
           throw new Error(`Response status: ${response.status}`);
         }
 
-        const json = await response.json();
-        console.log('res:', json);
-        setEmissionsVeh(json);
+        const jsonData = await response.json();
+        console.log('res:', jsonData);
+        setEmissionsVeh(jsonData);
       } catch (err) {
+        if (err instanceof Error)
         console.log(err.message);
       }
     }
-  }
+  } // end of submitForm(e)
+
+
 
   // this is making sure that emissionsElec, emissionsVeh, and emissionsType update before running their respective functions
   useEffect(() => {
-    setShowEmissionsElec(emissionsElec);
-    setShowEmissionsVeh(emissionsVeh);
+    setShowEmissionsElec(emissionsElec); // updates states with latest emission data
+    setShowEmissionsVeh(emissionsVeh); // before checking conditions
+
     console.log('e', showEmissionsElec);
     console.log('v', showEmissionsVeh);
-    if (!(showEmissionsVeh === '') && emissionType === 'vehicle') {
-      document.getElementById('veh-emissions').style.visibility = 'visible';
-    } else {
-      document.getElementById('veh-emissions').style.visibility = 'hidden';
+
+    const vehEmissionsElement = document.getElementById('veh-emissions');
+    const elecEmissionsElement = document.getElementById('elec-emissions');
+
+    if (vehEmissionsElement) {
+      if (showEmissionsVeh !== '' && emissionType === 'vehicle') {
+        vehEmissionsElement.style.visibility = 'visible';
+      } else {
+        vehEmissionsElement.style.visibility = 'hidden';
+      }
     }
-    if (!(showEmissionsElec === '') && emissionType === 'electricity') {
-      document.getElementById('elec-emissions').style.visibility = 'visible';
-    } else {
-      document.getElementById('elec-emissions').style.visibility = 'hidden';
+  
+    if (elecEmissionsElement) {
+      if (showEmissionsElec !== '' && emissionType === 'electricity') {
+        elecEmissionsElement.style.visibility = 'visible';
+      } else {
+        elecEmissionsElement.style.visibility = 'hidden';
+      }
     }
-  }, [emissionsElec, emissionsVeh]);
+  }, [emissionsElec, emissionsVeh]);// [[jsonData], [jsonData]]
 
   // this checks for what country you select so that you can choose the subregions for USA and Canada
   useEffect(() => {
@@ -191,32 +290,47 @@ export default function ClientForm() {
   // This creates the makes options array for the makes dropdown
   useEffect(() => {
     if (makes.length > 0) {
-      const makesArr = makes
+      const makesArr = makes // makes=[{ data: { attributes: { name: "Toyota" }, id: "123" } },
+                             // { data: { attributes: { name: "Honda" }, id: "456" } },];
         .map((makes) => {
-          return [makes.data.attributes.name, makes.data.id];
+          return [makes.data.attributes.name, makes.data.id]; // makesArr = [[name],[id]], [[Toyota],[123]], ...
         })
         .sort();
+        
       const sortedMakesArr = makesArr.map((sMakes, i) => {
         return (
           <option key={i} value={sMakes[1]}>
             {sMakes[0]}
           </option>
         );
-      });
+      }); // value={sMakes[1]} --> sends ID when user selects option
+
+
+
       setMakeOptions(sortedMakesArr);
       // console.log('compree', makes);
       // console.log('makeOptionArr', makeOptions);
     }
     // console.log('makeOptions:',makes);
-  }, [makes]);
+  }, [makes]); // dependency array. rerun whenever makes changes. [makes] = jsonData after fetch
+
 
   // CREATE THE MODELS OPTIONS ARRAY FOR THE MODELS DROPDOWN
   useEffect(() => {
     // console.log('creating model options array...')
-    if (models.length > 0) {
+    if (models.length > 0) { // getModels(e) is populated with jsonData
       //unhide the model selector
-      document.getElementById('model-options').style.visibility = 'visible';
-      document.getElementById('model-label').style.visibility = 'visible';
+      const modelOptionsElement = document.getElementById('model-options');
+      const modelLabelElement = document.getElementById('model-label');
+
+      if (modelOptionsElement) {
+        modelOptionsElement.style.visibility = 'visible';
+      }
+      if (modelLabelElement) {
+        modelLabelElement.style.visibility = 'visible';
+      }
+
+
       // console.log('model0:',models[0])
       const modelsArr = models
         .map((models) => {
@@ -227,7 +341,7 @@ export default function ClientForm() {
           ];
         })
         .sort();
-      console.log(modelsArr);
+      // console.log(modelsArr);
 
       const sortedModelsArr = modelsArr.map((sModels, i) => {
         return (
@@ -235,7 +349,7 @@ export default function ClientForm() {
             key={i}
             value={sModels[2]}
           >{`${sModels[0]} ${sModels[1]}`}</option>
-        );
+        ); // show name and year of car model and send back ID
       });
 
       console.log(sortedModelsArr);
@@ -244,10 +358,19 @@ export default function ClientForm() {
       // console.log('compree', models);
       // console.log('modelOptionsArr', modelOptions);
     } else {
-      document.getElementById('model-options').style.visibility = 'hidden';
-      document.getElementById('model-label').style.visibility = 'hidden';
+
+        //unhide the model selector
+        const modelOptionsElement = document.getElementById('model-options');
+        const modelLabelElement = document.getElementById('model-label');
+  
+        if (modelOptionsElement) {
+          modelOptionsElement.style.visibility = 'hidden';
+        }
+        if (modelLabelElement) {
+          modelLabelElement.style.visibility = 'hidden';
+        }
     }
-  }, [models]);
+  }, [models]); // listen for a change in [models] --> models jsonData 
 
   return (
     <div id='mainDiv'>
@@ -270,6 +393,7 @@ export default function ClientForm() {
             <option value=''>Vehicle Make</option>
             {makeOptions}
           </select>
+
           <br></br>
           <label id='model-label'>Vehicle Model</label>
           <select
@@ -290,7 +414,7 @@ export default function ClientForm() {
             required
             min='0'
             value={distance}
-            step='0.01'
+            step='0.1'
           ></input>
           <label>Unit Select</label>
           <select
@@ -305,8 +429,15 @@ export default function ClientForm() {
           </select>
           <input type='submit'></input>
         </form>
-        <p id='veh-emissions'>{`Carbon Emissions (lb): ${showEmissionsVeh.carbon_lb}
-      Carbon Emissions (kg): ${showEmissionsVeh.carbon_kg}`}</p>
+
+        <p id='veh-emissions'>
+        {typeof showEmissionsVeh === 'object' && showEmissionsVeh !== null ? (
+            <>
+            Carbon Emissions (lb): ${showEmissionsVeh.carbon_lb} <br />
+      Carbon Emissions (kg): ${showEmissionsVeh.carbon_kg}
+      </>
+      ) : ('No emissions data available')}
+      </p>
       </div>
       <div id='electricity-form'>
         <h1>How much power U B usin?</h1>
@@ -447,8 +578,17 @@ export default function ClientForm() {
           ></input>
           <input type='submit'></input>
         </form>
-        <p id='elec-emissions'>{`Carbon Emissions (lb): ${showEmissionsElec.carbon_lb}
-      Carbon Emissions (kg): ${showEmissionsElec.carbon_kg}`}</p>
+        
+        {/*narrowed types of showEmissionsElec before attempting to access its properties in case it was undefined*/}
+        <p id='elec-emissions'>
+          {typeof showEmissionsElec === 'object' && showEmissionsElec !== null ? (
+            <>
+            Carbon Emissions (lb): ${showEmissionsElec.carbon_lb} <br />
+      Carbon Emissions (kg): ${showEmissionsElec.carbon_kg}
+      </>
+      ) : ('No emissions data available')}
+      </p>
+          
       </div>
       <div id='offset-programs'>
         <h3>Offset Programs</h3>

@@ -1,8 +1,20 @@
 import { useState } from "react";
 
+interface OffsetPrograms {
+  id: number;
+  name: string;
+  link: string;
+  description: string;
+};
+
+interface CarbonRates {
+  lbPerDollar: number;
+  krPerDollar: number;
+}
+
 
 // links to donate
-const offsetPrograms = [
+const offsetPrograms: OffsetPrograms[] = [
     {
       "id": 1,
       "name": "Tree planting",
@@ -18,18 +30,18 @@ const offsetPrograms = [
   ];
 
   // Emission offset values (example rates)
-  const carbonRates = {
+  const carbonRates: CarbonRates = {
     lbPerDollar: 50, // 50 lbs offset per $1
     krPerDollar: 22.68, // 22.68 kg offset per $1
   }
   
 // capital O
   const OffsetPrograms = () => {
-    const [visibleProgram, setVisibleProgram] = useState(null); // Track which program's input is visible
-    const [offsetResults, setOffsetResults] = useState({});
+    const [visibleProgram, setVisibleProgram] = useState<number | null>(null); // Track which program's input is visible
+    const [offsetResults, setOffsetResults] = useState<Record<number, string>>({});
 
     // calculate carbon offset fro a program
-    const calculateOffset  = (id, donation) => {
+    const calculateOffset  = (id: number, donation: number | null) => {
         if (!donation || donation <= 0) {
             setOffsetResults((prev) => ({
                 ...prev, [id]: "please enter a valid donation amount."
