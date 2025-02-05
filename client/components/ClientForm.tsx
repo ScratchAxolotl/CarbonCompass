@@ -253,19 +253,23 @@ const ClientForm: React.FC = () => {
     console.log('e', showEmissionsElec);
     console.log('v', showEmissionsVeh);
 
+    console.log('e2', showEmissionsElec);
+    console.log('v2', emissionsElec);
+
     const vehEmissionsElement = document.getElementById('veh-emissions');
     const elecEmissionsElement = document.getElementById('elec-emissions');
-
-    if (vehEmissionsElement) {
-      if (showEmissionsVeh !== '' && emissionType === 'vehicle') {
-        vehEmissionsElement.style.visibility = 'visible';
-      } else {
-        vehEmissionsElement.style.visibility = 'hidden';
-      }
+      // Vehicle Emissions Visibility
+      if (vehEmissionsElement) {
+        if (emissionsVeh && emissionType === 'vehicle') {
+            vehEmissionsElement.style.visibility = 'visible';
+        } else {
+            vehEmissionsElement.style.visibility = 'hidden';
+        }
     }
+
   
     if (elecEmissionsElement) {
-      if (showEmissionsElec !== '' && emissionType === 'electricity') {
+      if (emissionsElec && emissionType === 'electricity') {
         elecEmissionsElement.style.visibility = 'visible';
       } else {
         elecEmissionsElement.style.visibility = 'hidden';
@@ -597,3 +601,5 @@ const ClientForm: React.FC = () => {
     </div>
   );
 }
+
+export default ClientForm
