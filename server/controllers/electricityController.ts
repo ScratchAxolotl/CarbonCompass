@@ -1,9 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
-// import pool from '../model/carbonCompassModel.js'
 import { v4 as uuidv4 } from 'uuid';
+// Create a supabase client for interacting with your database
+import { createClient } from '@supabase/supabase-js'
+const supabaseUrl = 'https://iplouzmpgowturxalotd.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwbG91em1wZ293dHVyeGFsb3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg1NDUxNDUsImV4cCI6MjA1NDEyMTE0NX0.lM3Mr1vQgI82T_dx-G9y0pf-SDRD-rLvXEbNXojIMOA'
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-// const electricityController = {};
 
 interface ElectricityRequestBody {
   type: string;
@@ -63,8 +66,18 @@ const electricityController: ElectricityController = {
     const roundedDownCarbon_kg = Math.floor(carbon_kg)
     const roundedDownElectricity_value = Math.floor(electricity_value)
 
-    // const result = await pool.query(`INSERT INTO electricity_emissions (electricity_emissions_id, session_id, country, state, kwh, estimate_emissions) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, [newUUID, "7ac8d3ed-04a9-4648-914c-5f0fab2e6f05",country,state,roundedDownElectricity_value,roundedDownCarbon_kg]);
-    // console.log("result of SQL insertion in electric controller", result.rows[0])
+    const { data, error } = await supabase
+      .from('electricity_emissions')
+      .insert({ electricity_emissions_id: newUUID, 
+        session_id: '235aea14-0f20-422e-b44b-c4e7d21d68f4',
+        country: country,
+        state: state,
+        kwh: roundedDownElectricity_value,
+        estimate_emissions: roundedDownCarbon_kg
+      })
+      .select()
+
+      console.log("data from supabase in electricityController", data)
     // * ////////////////////////////////////
 
       res.locals.emissionsData = emissionsData;
