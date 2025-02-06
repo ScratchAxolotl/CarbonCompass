@@ -38,7 +38,7 @@ const vehicleController: VehicleController = {
         'https://www.carboninterface.com/api/v1/vehicle_makes',
         {
           headers: {
-            Authorization: 'Bearer IjDMYGZHSI4y3gYMoxQYqQ',
+            Authorization: 'Bearer ntmUMMGksam7lMdDs3g1A',
             'Content-Type': 'application/json',
           },
         }
@@ -62,7 +62,7 @@ const vehicleController: VehicleController = {
         `https://www.carboninterface.com/api/v1/vehicle_makes/${makeId}/vehicle_models`,
         {
           headers: {
-            Authorization: 'Bearer IjDMYGZHSI4y3gYMoxQYqQ',
+            Authorization: 'Bearer ntmUMMGksam7lMdDs3g1A',
             'Content-Type': 'application/json',
           },
         }
@@ -89,7 +89,7 @@ const vehicleController: VehicleController = {
         { type, distance_unit, distance_value, vehicle_model_id },
         {
           headers: {
-            Authorization: 'Bearer IjDMYGZHSI4y3gYMoxQYqQ',
+            Authorization: 'Bearer ntmUMMGksam7lMdDs3g1A',
             'Content-Type': 'application/json',
           },
         }
