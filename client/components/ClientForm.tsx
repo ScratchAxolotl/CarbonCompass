@@ -39,6 +39,14 @@ interface VehicleEmissionRequest {
   vehicle_model_id: string; // The vehicle model's ID
 }
 
+interface ElectricityEmissionRequest {
+  type: string;
+  country: string;
+  state: string;
+  electricity_unit: string;
+  electricity_value: number | string;
+}
+
 
 // export default function ClientForm()
 const ClientForm: React.FC = () => {
@@ -165,49 +173,13 @@ const ClientForm: React.FC = () => {
   }
 
 
-  async function submitForm(e?: FormEvent<HTMLFormElement>) {
-    // e.preventDefault();
-    const url = `/api/${emissionType}`;
-    let request;
-    if (emissionType === 'electricity') {
-      request = {
-        method: 'POST',
-        body: JSON.stringify({
-          type: 'electricity',
-          country: country,
-          state: subregion,
-          electricity_unit: 'kwh',
-          electricity_value: powerUsage,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-      try {
-        console.log('req:', request);
-        const response = await fetch(url, request);
-        if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
-        }
-
-        const jsonData = await response.json();
-        setEmissionsElec(jsonData);
-        console.log('res:', jsonData);
-
-        
-
-      } catch (err) {
-        if (err instanceof Error) {
-           console.log(err.message);
-        }
-      }
-    } else if (emissionType === 'vehicle') {
+  async function submitVehicleForm(e?: FormEvent<HTMLFormElement>) {
+      const url = `/api/vehicle`;
 
       if (!distanceUnit || !distance || !vehicleModelId) {
-      console.error('Missing required fields for vehicle emissions');
-      return;
-    }
-
+        console.error('Missing required fields for Vehicle emissions');
+        return;
+      }
 
       const requestBody: VehicleEmissionRequest = {
         type: 'vehicle',
@@ -216,32 +188,69 @@ const ClientForm: React.FC = () => {
       vehicle_model_id: vehicleModelId,
     };
 
+      const request = {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+  }
 
-    const request: RequestInit = {
+  try {
+    //  console.log('req:', request);
+      const response = await fetch(url, request);
+      if (!response.ok) {
+        throw new Error(`Vehicle Response Status : ${response.status}`);
+      }
+
+      const jsonData = await response.json();
+      console.log('res:', jsonData);
+      setEmissionsVeh(jsonData);
+    } catch (err) {
+      if (err instanceof Error)
+      console.log(err.message);
+    }
+  }
+
+
+  async function submitElectricityForm(e?: FormEvent<HTMLFormElement>) {
+    const url = `/api/electricity`;
+    if (!country || !subregion || !powerUsage) {
+      console.error('Missing required fields for Electricity emissions');
+      return;
+    }
+
+    const requestBody: ElectricityEmissionRequest = {
+      type: 'electricity',
+      country: country,
+      state: subregion,
+      electricity_unit: 'kwh',
+      electricity_value: powerUsage,
+    };
+
+    const request = {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: {
         'Content-Type': 'application/json',
       },
-    };
+  }
 
-
-      try {
-      //  console.log('req:', request);
-        const response = await fetch(url, request);
-        if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
-        }
-
-        const jsonData = await response.json();
-        console.log('res:', jsonData);
-        setEmissionsVeh(jsonData);
-      } catch (err) {
-        if (err instanceof Error)
-        console.log(err.message);
+  try {
+    //  console.log('req:', request);
+      const response = await fetch(url, request);
+      if (!response.ok) {
+        throw new Error(`Electricity Response Status : ${response.status}`);
       }
+
+      const jsonData = await response.json();
+      console.log('res:', jsonData);
+      setEmissionsElec(jsonData);
+    } catch (err) {
+      if (err instanceof Error)
+      console.log(err.message);
     }
-  } // end of submitForm(e)
+}
 
 
 
@@ -253,19 +262,23 @@ const ClientForm: React.FC = () => {
     console.log('e', showEmissionsElec);
     console.log('v', showEmissionsVeh);
 
+    console.log('e2', showEmissionsElec);
+    console.log('v2', emissionsElec);
+
     const vehEmissionsElement = document.getElementById('veh-emissions');
     const elecEmissionsElement = document.getElementById('elec-emissions');
-
-    if (vehEmissionsElement) {
-      if (showEmissionsVeh !== '' && emissionType === 'vehicle') {
-        vehEmissionsElement.style.visibility = 'visible';
-      } else {
-        vehEmissionsElement.style.visibility = 'hidden';
-      }
+      // Vehicle Emissions Visibility
+      if (vehEmissionsElement) {
+        if (emissionsVeh && emissionType === 'vehicle') {
+            vehEmissionsElement.style.visibility = 'visible';
+        } else {
+            vehEmissionsElement.style.visibility = 'hidden';
+        }
     }
+
   
     if (elecEmissionsElement) {
-      if (showEmissionsElec !== '' && emissionType === 'electricity') {
+      if (emissionsElec && emissionType === 'electricity') {
         elecEmissionsElement.style.visibility = 'visible';
       } else {
         elecEmissionsElement.style.visibility = 'hidden';
@@ -277,10 +290,27 @@ const ClientForm: React.FC = () => {
   useEffect(() => {
     subRegionsVis();
   });
+// **** need to split useEffect into 2. one for vehicles and one for electricity.
+  // useEffect(() => {
+  //   submitForm();
+  // }, [emissionType]);
+
+  // useEffect for Vehicles
+  useEffect(() => {
+    if (emissionType === 'vehicle' && makes && models && distance && distanceUnit && vehicleModelId) {
+      submitVehicleForm();
+    } else {
+      console.log('vehicle useEffect not working')
+    }
+  }, [emissionType, makes, models, distance, distanceUnit, vehicleModelId]);
 
   useEffect(() => {
-    submitForm();
-  }, [emissionType]);
+    if (emissionType === 'electricity' && country && powerUsage && subregion) {
+    submitElectricityForm();
+    }else {
+      console.log('electricity useEffect not working')
+    }
+  }, [emissionType, country, subregion, powerUsage]);
 
   // this does the fetch for the makes
   useEffect(() => {
@@ -379,7 +409,7 @@ const ClientForm: React.FC = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            setEmissionType('vehicle');
+            setEmissionType('vehicle'); // triggers `useEffect` for vehicle submission
           }}
         >
           {/* SELECT THE VEHICLE MAKE AND AFTER THE CLIENT CLICKS AN OPTION, SERVE THE MODELS */}
@@ -433,8 +463,8 @@ const ClientForm: React.FC = () => {
         <p id='veh-emissions'>
         {typeof showEmissionsVeh === 'object' && showEmissionsVeh !== null ? (
             <>
-            Carbon Emissions (lb): ${showEmissionsVeh.carbon_lb} <br />
-      Carbon Emissions (kg): ${showEmissionsVeh.carbon_kg}
+            Carbon Emissions (lb): {showEmissionsVeh.carbon_lb} <br />
+      Carbon Emissions (kg): {showEmissionsVeh.carbon_kg}
       </>
       ) : ('No emissions data available')}
       </p>
@@ -444,7 +474,7 @@ const ClientForm: React.FC = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            setEmissionType('electricity');
+            setEmissionType('electricity'); // triggers `useEffect` for electricity submission
           }}
         >
           <label>Country</label>
@@ -583,8 +613,10 @@ const ClientForm: React.FC = () => {
         <p id='elec-emissions'>
           {typeof showEmissionsElec === 'object' && showEmissionsElec !== null ? (
             <>
-            Carbon Emissions (lb): ${showEmissionsElec.carbon_lb} <br />
-      Carbon Emissions (kg): ${showEmissionsElec.carbon_kg}
+            Carbon Emissions (lb): {showEmissionsElec.carbon_lb} <br />
+      Carbon Emissions (kg): {showEmissionsElec.carbon_kg}
+            Carbon Emissions (lb): {showEmissionsElec.carbon_lb} <br />
+      Carbon Emissions (kg): {showEmissionsElec.carbon_kg}
       </>
       ) : ('No emissions data available')}
       </p>
@@ -597,3 +629,5 @@ const ClientForm: React.FC = () => {
     </div>
   );
 }
+
+export default ClientForm
