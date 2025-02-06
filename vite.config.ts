@@ -1,9 +1,11 @@
-import { defineConfig } from 'vite';
+import { defineConfig, UserConfig, PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig({
+const plugins: PluginOption[] = [react() as PluginOption];
+
+const config: UserConfig = {
   root: 'client', // Ensures Vite serves from 'client/'
-  plugins: [react()],
+  plugins,
   build: {
     outDir: 'dist', // Ensures Vite builds inside 'client/dist/'
     emptyOutDir: true, // Clears old build files before each build
@@ -14,4 +16,6 @@ export default defineConfig({
       '/api': 'http://localhost:3000',
     },
   },
-});
+};
+
+export default defineConfig(config);
