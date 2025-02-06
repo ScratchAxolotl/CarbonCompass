@@ -1,6 +1,14 @@
 import axios from 'axios';
-// import pool from '../model/carbonCompassModel.js'
+// import supabase from '../model/supabaseCarbonCompassModel.js'
 import { v4 as uuidv4 } from 'uuid';
+// Create a supabase client for interacting with your database
+import { createClient } from '@supabase/supabase-js'
+const supabaseUrl = 'https://iplouzmpgowturxalotd.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwbG91em1wZ293dHVyeGFsb3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg1NDUxNDUsImV4cCI6MjA1NDEyMTE0NX0.lM3Mr1vQgI82T_dx-G9y0pf-SDRD-rLvXEbNXojIMOA'
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+
+
 
 import { Request, Response, NextFunction } from 'express';
 
@@ -105,8 +113,21 @@ const vehicleController: VehicleController = {
       const roundedDownCarbon_kg = Math.floor(carbon_kg)
       const roundedDowndistance_value = Math.floor(distance_value)
 
-      // const result = await pool.query(`INSERT INTO vehicle_emissions (vehicle_emissions_id, session_id, vehicle_model_id, unit, units_driven, estimate_emissions) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, [newUUID, "7ac8d3ed-04a9-4648-914c-5f0fab2e6f05",vehicle_model_id,distance_unit,roundedDowndistance_value,roundedDownCarbon_kg]);
-      // console.log("result of SQL insertion in electric controller", result.rows[0])
+
+      const { data, error } = await supabase
+      .from('vehicle_emissions')
+      .insert({ vehicle_emissions_id: newUUID, 
+        session_id: '235aea14-0f20-422e-b44b-c4e7d21d68f4',
+        unit: distance_unit,
+        units_driven: roundedDowndistance_value,
+        estimate_emissions: roundedDownCarbon_kg,
+        vehicle_model_id: vehicle_model_id
+        })
+      .select()
+
+
+      console.log("data from supabase in vehicleController", data)
+
       // * ////////////////////////////////////
 
       res.locals.vehicleModels = emissionsData;
