@@ -615,6 +615,8 @@ const ClientForm: React.FC = () => {
             <>
             Carbon Emissions (lb): {showEmissionsElec.carbon_lb} <br />
       Carbon Emissions (kg): {showEmissionsElec.carbon_kg}
+            Carbon Emissions (lb): {showEmissionsElec.carbon_lb} <br />
+      Carbon Emissions (kg): {showEmissionsElec.carbon_kg}
       </>
       ) : ('No emissions data available')}
       </p>
