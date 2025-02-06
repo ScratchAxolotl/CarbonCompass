@@ -202,11 +202,12 @@ const ClientForm: React.FC = () => {
         }
       }
     } else if (emissionType === 'vehicle') {
+      console.log("emissionType is entered into on clientForm and tiggered on vehicle")
 
       if (!distanceUnit || !distance || !vehicleModelId) {
-      console.error('Missing required fields for vehicle emissions');
-      return;
-    }
+        console.error('Missing required fields for vehicle emissions');
+        return;
+      }
 
 
       const requestBody: VehicleEmissionRequest = {
@@ -587,8 +588,8 @@ const ClientForm: React.FC = () => {
         <p id='elec-emissions'>
           {typeof showEmissionsElec === 'object' && showEmissionsElec !== null ? (
             <>
-            Carbon Emissions (lb): ${showEmissionsElec.carbon_lb} <br />
-      Carbon Emissions (kg): ${showEmissionsElec.carbon_kg}
+            Carbon Emissions (lb): {showEmissionsElec.carbon_lb} <br />
+      Carbon Emissions (kg): {showEmissionsElec.carbon_kg}
       </>
       ) : ('No emissions data available')}
       </p>

@@ -38,7 +38,7 @@ const vehicleController: VehicleController = {
         'https://www.carboninterface.com/api/v1/vehicle_makes',
         {
           headers: {
-            Authorization: 'Bearer 11UjdqrI0oFfPbmU2GTWVQ',
+            Authorization: 'Bearer IjDMYGZHSI4y3gYMoxQYqQ',
             'Content-Type': 'application/json',
           },
         }
@@ -62,7 +62,7 @@ const vehicleController: VehicleController = {
         `https://www.carboninterface.com/api/v1/vehicle_makes/${makeId}/vehicle_models`,
         {
           headers: {
-            Authorization: 'Bearer 11UjdqrI0oFfPbmU2GTWVQ',
+            Authorization: 'Bearer IjDMYGZHSI4y3gYMoxQYqQ',
             'Content-Type': 'application/json',
           },
         }
@@ -105,7 +105,7 @@ const vehicleController: VehicleController = {
       const roundedDownCarbon_kg = Math.floor(carbon_kg)
       const roundedDowndistance_value = Math.floor(distance_value)
 
-      const result = await pool.query(`INSERT INTO vehicle_emissions (vehicle_emissions_id, session_id, make, model, unit, units_driven, estimate_emissions) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, [newUUID, "7ac8d3ed-04a9-4648-914c-5f0fab2e6f05",country,state,roundedDownElectricity_value,roundedDownCarbon_kg]);
+      const result = await pool.query(`INSERT INTO vehicle_emissions (vehicle_emissions_id, session_id, vehicle_model_id, unit, units_driven, estimate_emissions) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, [newUUID, "7ac8d3ed-04a9-4648-914c-5f0fab2e6f05",vehicle_model_id,distance_unit,roundedDowndistance_value,roundedDownCarbon_kg]);
       console.log("result of SQL insertion in electric controller", result.rows[0])
       // * ////////////////////////////////////
 
