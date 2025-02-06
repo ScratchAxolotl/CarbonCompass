@@ -5,25 +5,21 @@ import { v4 as uuidv4 } from 'uuid';
 
 // const electricityController = {};
 
-
-
-interface ElectricityRequestBody{
+interface ElectricityRequestBody {
   type: string;
-  electricity_unit: string; 
+  electricity_unit: string;
   electricity_value: number;
   country: string;
-  state: string;  
+  state: string;
 }
 
 interface ElectricityController {
   getEmissions: (
     req: Request<{}, {}, ElectricityRequestBody>,
     res: Response,
-     next: NextFunction
+    next: NextFunction
   ) => Promise<void>;
 }
-
-
 
 const electricityController: ElectricityController = {
   getEmissions: async (req: Request, res: Response, next: NextFunction )  => {
@@ -31,25 +27,33 @@ const electricityController: ElectricityController = {
   try {
     const {type, country, state, electricity_unit, electricity_value} = req.body;
 
-    if (!type || !country || !state || !electricity_unit || !electricity_value) {
-      res.status(400).json({message: "Missing required fields in request body"})
-      return;
-    }
-
-    const response = await axios.post(
-      'https://www.carboninterface.com/api/v1/estimates',
-      {type, electricity_unit, electricity_value, country, state},
-      {
-        headers: {
-          Authorization: 'Bearer ntmUMMGksam7lMdDs3g1A',
-          'Content-Type': 'application/json'
-        }
+      if (
+        !type ||
+        !country ||
+        !state ||
+        !electricity_unit ||
+        !electricity_value
+      ) {
+        res
+          .status(400)
+          .json({ message: 'Missing required fields in request body' });
+        return;
       }
-    );
 
-    const { carbon_lb, carbon_kg } = response.data.data.attributes
+      const response = await axios.post(
+        'https://www.carboninterface.com/api/v1/estimates',
+        { type, electricity_unit, electricity_value, country, state },
+        {
+          headers: {
+            Authorization: 'Bearer ntmUMMGksam7lMdDs3g1A',
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-    const emissionsData = { carbon_lb, carbon_kg };
+      const { carbon_lb, carbon_kg } = response.data.data.attributes;
+
+      const emissionsData = { carbon_lb, carbon_kg };
 
     console.log('Electricity emissionsData', emissionsData);
 
@@ -63,14 +67,14 @@ const electricityController: ElectricityController = {
     // console.log("result of SQL insertion in electric controller", result.rows[0])
     // * ////////////////////////////////////
 
-    res.locals.emissionsData = emissionsData;
-    return next();
-  } catch (error) {
-    if (error instanceof Error)
-    console.error('Error creating carbon estimate:', error.message);
-    res.status(500).json({ error: 'Error fetching data' });
-   }
-  }
+      res.locals.emissionsData = emissionsData;
+      return next();
+    } catch (error) {
+      if (error instanceof Error)
+        console.error('Error creating carbon estimate:', error.message);
+      res.status(500).json({ error: 'Error fetching data' });
+    }
+  },
 };
 
 export default electricityController;
