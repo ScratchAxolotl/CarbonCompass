@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
-import pool from '../model/carbonCompassModel.js'
+// import pool from '../model/carbonCompassModel.js'
 import { v4 as uuidv4 } from 'uuid';
 
 // const electricityController = {};
@@ -63,8 +63,8 @@ const electricityController: ElectricityController = {
     const roundedDownCarbon_kg = Math.floor(carbon_kg)
     const roundedDownElectricity_value = Math.floor(electricity_value)
 
-    const result = await pool.query(`INSERT INTO electricity_emissions (electricity_emissions_id, session_id, country, state, kwh, estimate_emissions) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, [newUUID, "7ac8d3ed-04a9-4648-914c-5f0fab2e6f05",country,state,roundedDownElectricity_value,roundedDownCarbon_kg]);
-    console.log("result of SQL insertion in electric controller", result.rows[0])
+    // const result = await pool.query(`INSERT INTO electricity_emissions (electricity_emissions_id, session_id, country, state, kwh, estimate_emissions) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, [newUUID, "7ac8d3ed-04a9-4648-914c-5f0fab2e6f05",country,state,roundedDownElectricity_value,roundedDownCarbon_kg]);
+    // console.log("result of SQL insertion in electric controller", result.rows[0])
     // * ////////////////////////////////////
 
       res.locals.emissionsData = emissionsData;

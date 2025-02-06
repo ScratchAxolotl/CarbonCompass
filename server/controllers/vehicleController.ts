@@ -1,5 +1,5 @@
 import axios from 'axios';
-import pool from '../model/carbonCompassModel.js'
+// import pool from '../model/carbonCompassModel.js'
 import { v4 as uuidv4 } from 'uuid';
 
 import { Request, Response, NextFunction } from 'express';
@@ -105,8 +105,8 @@ const vehicleController: VehicleController = {
       const roundedDownCarbon_kg = Math.floor(carbon_kg)
       const roundedDowndistance_value = Math.floor(distance_value)
 
-      const result = await pool.query(`INSERT INTO vehicle_emissions (vehicle_emissions_id, session_id, vehicle_model_id, unit, units_driven, estimate_emissions) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, [newUUID, "7ac8d3ed-04a9-4648-914c-5f0fab2e6f05",vehicle_model_id,distance_unit,roundedDowndistance_value,roundedDownCarbon_kg]);
-      console.log("result of SQL insertion in electric controller", result.rows[0])
+      // const result = await pool.query(`INSERT INTO vehicle_emissions (vehicle_emissions_id, session_id, vehicle_model_id, unit, units_driven, estimate_emissions) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, [newUUID, "7ac8d3ed-04a9-4648-914c-5f0fab2e6f05",vehicle_model_id,distance_unit,roundedDowndistance_value,roundedDownCarbon_kg]);
+      // console.log("result of SQL insertion in electric controller", result.rows[0])
       // * ////////////////////////////////////
 
       res.locals.vehicleModels = emissionsData;
